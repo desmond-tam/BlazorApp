@@ -1,0 +1,29 @@
+name: deploy to github pages
+
+# run workflow on every push to the master branch
+on:
+  push:
+    branches: [ master ]
+    
+jobs:
+  deploy-to-github-pages:
+    runs-on:  ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup dot net core SDK
+        uses: actions/setup-dotnet@v1.6.0
+        with:
+          dotnet-version: 3.1
+          
+      - name: publish .net core project
+        run: dotnet publish Blazor.csproj -c Release -o release --nologo 
+      
+      - name: commit wwwroot to github pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FLODER: release/wwwroot
+        
+     
+    
